@@ -2,6 +2,7 @@ package message
 
 import (
 	"reflect"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -21,9 +22,12 @@ type StructRecord struct {
 // ErrNotAStruct is for when the provided arg is not a struct
 var ErrNotAStruct = errors.New("not a struct")
 
-// NewStructRecord createa a new StructRecord. Thee tagName arg
+// NewStructRecord createa a new StructRecord. The tagName arg
 // is optional and will be used instead of the default field name.
 // While the tagName arg is a slice, only the [0] value is used.
+// The value of the tag for a given field is ignore if it is "" or "-".
+// and will be skipped. If the tag value has a "," in it, the part
+// before comma is used as the tag value. This allows for values like "id,omitempty"
 func NewStructRecord(strct interface{}, tagName ...string) (StructRecord, error) {
 	tag := ""
 	if len(tagName) > 0 {
@@ -57,8 +61,8 @@ func extract(f reflect.StructField, tag string, tagsToName map[string]string) []
 	tags := []string{}
 	tagVal := f.Name
 	if tag != "" {
-		tagVal = f.Tag.Get(tag)
-		if tagVal == "" {
+		tagVal = strings.Split(f.Tag.Get(tag), ",")[0]
+		if tagVal == "" || tagVal == "-" {
 			// don't add if there was not tag value for a specified tag
 			return tags
 		}

@@ -20,7 +20,7 @@ type TestStructWithoutTags struct {
 
 type TestStructWithSomeTags struct {
 	ID    int    `db:"id"`
-	Name  string `db:"name"`
+	Name  string `db:"name,omitempty"`
 	Phone string
 }
 
