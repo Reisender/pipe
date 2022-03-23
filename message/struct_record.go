@@ -43,8 +43,10 @@ func NewStructRecord(strct interface{}, tagName ...string) (StructRecord, error)
 	tags := []string{}
 	tagsToName := map[string]string{}
 
-	for i := 0; i < t.NumField(); i++ {
-		tags = append(tags, extract(t.Field(i), tag, tagsToName)...)
+	for _, sf := range reflect.VisibleFields(t) {
+		if sf.IsExported() && !sf.Anonymous {
+			tags = append(tags, extract(sf, tag, tagsToName)...)
+		}
 	}
 
 	rec := StructRecord{tagName: tag, record: strct, tags: tags, tagsToName: tagsToName}
@@ -53,18 +55,6 @@ func NewStructRecord(strct interface{}, tagName ...string) (StructRecord, error)
 
 func extract(f reflect.StructField, tag string, tagsToName map[string]string) []string {
 	tags := []string{}
-	if f.Anonymous {
-		// is embedded so drop in and extract the fields on this
-		ft := f.Type
-		if ft.Kind() == reflect.Ptr {
-			ft = ft.Elem() // traverse the ptr to the non-ptr
-		}
-		for i := 0; i < ft.NumField(); i++ {
-			tags = append(tags, extract(ft.Field(i), tag, tagsToName)...)
-		}
-		return tags
-	}
-
 	tagVal := f.Name
 	if tag != "" {
 		tagVal = f.Tag.Get(tag)

@@ -13,8 +13,9 @@ type TestStructWithTags struct {
 }
 
 type TestStructWithoutTags struct {
-	ID   int
-	Name string
+	ID         int
+	Name       string
+	unexported bool
 }
 
 type TestStructWithSomeTags struct {
@@ -73,7 +74,7 @@ func TestStructRecord(t *testing.T) {
 	})
 
 	t.Run("without tags", func(t *testing.T) {
-		foo := TestStructWithoutTags{1, "foo"}
+		foo := TestStructWithoutTags{1, "foo", false}
 		r, err := message.NewStructRecord(foo)
 		if err != nil {
 			t.Error(err)
