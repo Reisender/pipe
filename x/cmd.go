@@ -61,7 +61,7 @@ func (e Cmd) P(out chan<- interface{}, errs chan<- error) {
 	go func() {
 		defer errwg.Done()
 		for errScanner.Scan() {
-			errs <- fmt.Errorf(errScanner.Text()) // Println will add back the final '\n'
+			errs <- fmt.Errorf("%s", errScanner.Text()) // Println will add back the final '\n'
 		}
 	}()
 
@@ -124,7 +124,7 @@ func (e Cmd) TStream(in <-chan interface{}, out chan<- interface{}, errs chan<- 
 	go func() {
 		defer errwg.Done()
 		for errScanner.Scan() {
-			errs <- fmt.Errorf(errScanner.Text()) // Println will add back the final '\n'
+			errs <- fmt.Errorf("%s", errScanner.Text()) // Println will add back the final '\n'
 		}
 	}()
 
@@ -237,7 +237,7 @@ func (e Cmd) T(in <-chan interface{}, out chan<- interface{}, errs chan<- error)
 		go func() {
 			defer errwg.Done()
 			for errScanner.Scan() {
-				errs <- fmt.Errorf(errScanner.Text()) // Println will add back the final '\n'
+				errs <- fmt.Errorf("%s", errScanner.Text()) // Println will add back the final '\n'
 			}
 		}()
 
